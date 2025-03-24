@@ -120,7 +120,7 @@ if (url.hostname.endsWith(blockedDomain)) {
     process.exit(1);
 }
 
-if (!['GET', 'POST', 'HEAD', 'OPTIONS'].includes(reqmethod)) {
+if (!['GET', 'POST', 'HEAD', 'OPTIONS', 'CONNECT'].includes(reqmethod)) {
     console.error('Error request method only can GET/POST/HEAD/OPTIONS');
     process.exit(1);
 }
