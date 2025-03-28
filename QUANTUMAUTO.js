@@ -1,50 +1,43 @@
-const { exec } = require('child_process');
+const { exec, execSync } = require("child_process");
 
-// Ambil argumen dari command line
 const args = process.argv.slice(2);
-const host = args[0] || "example.com";
-const time = parseInt(args[1]) || 120;
-const thread = args[2] || 100;
-const rate = args[3] || 1000;
-const proxyFile = args[4] || "proxy.txt";
+if (args.length < 5) {
+    console.error("Penggunaan: node QUANTUMAUTO.js <host> <time> <thread> <rate> <proxy.txt>");
+    process.exit(1);
+}
 
-let elapsedTime = 0; // Waktu berjalan
+const [host, time, thread, rate, proxy] = args;
+let elapsedTime = 0; 
+const restartInterval = 30; // Restart setiap 60 detik
+const restartDelay = 1; // Jeda 1 detik sebelum memulai ulang
 
 function runScript() {
     if (elapsedTime >= time) {
-        console.log(`Waktu ${time} detik sudah habis. Skrip berhenti.`);
-        return; // Hentikan skrip
+        console.log(`\nWaktu ${time} detik sudah habis. Skrip berhenti.`);
+        return;
     }
 
-    console.log(`Menjalankan QUANTUM1.js untuk ${host} (Elapsed: ${elapsedTime}/${time} detik)...`);
+    console.log(`\n[${new Date().toISOString()}] Menjalankan QUANTUM1.js untuk ${host} (Elapsed: ${elapsedTime}/${time} detik)...`);
 
-    const command = `node QUANTUM1.js ${host} ${Math.min(60, time - elapsedTime)} ${thread} ${rate} ${proxyFile}`;
-    const process = exec(command, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Terjadi kesalahan: ${error.message}`);
-        }
-        if (stderr) {
-            console.error(`Error Output: ${stderr}`);
-        }
-        console.log(`Output: ${stdout}`);
-    });
+    try {
+        execSync("pkill -9 -f QUANTUM1.js"); // Hentikan proses lama sebelum restart
+        console.log("Proses QUANTUM1.js sebelumnya dihentikan.");
+    } catch (error) {
+        console.log("Tidak ada proses QUANTUM1.js yang berjalan sebelumnya.");
+    }
 
-    // Hitung waktu sisa
-    const interval = Math.min(60, time - elapsedTime);
-
-    // Hentikan proses setelah interval
+    // Tunggu 1 detik sebelum memulai ulang
     setTimeout(() => {
-        console.log(`Menghentikan QUANTUM1.js setelah ${interval} detik...`);
-        process.kill();
-        elapsedTime += interval;
+        const process = exec(`node /root/methods/QUANTUM1.js ${host} ${restartInterval} ${thread} ${rate} ${proxy}`);
 
-        if (elapsedTime < time) {
-            console.log(`Restart dalam 60 detik... (Elapsed: ${elapsedTime}/${time})`);
-            setTimeout(runScript, 60000);
-        } else {
-            console.log(`Waktu ${time} detik sudah habis. Skrip berhenti.`);
-        }
-    }, interval * 1000);
+        process.stdout.on("data", (data) => console.log(data.toString()));
+        process.stderr.on("data", (data) => console.error(data.toString()));
+
+        setTimeout(() => {
+            elapsedTime += restartInterval;
+            runScript();
+        }, restartInterval * 1000); // Restart setiap 60 detik
+    }, restartDelay * 1000); // Jeda 1 detik sebelum memulai ulang
 }
 
 runScript();
