@@ -8,7 +8,7 @@ if (args.length < 5) {
 
 const [host, time, thread, rate, proxy] = args;
 let elapsedTime = 0; 
-const restartInterval = 60; // Restart setiap 60 detik
+const restartInterval = 160; // Restart setiap 60 detik
 const restartDelay = 2; // Jeda 1 detik sebelum memulai ulang
 
 function runScript() {
@@ -20,7 +20,7 @@ function runScript() {
     console.log(`\n[${new Date().toISOString()}] Menjalankan QUANTUM1.js untuk ${host} (Elapsed: ${elapsedTime}/${time} detik)...`);
 
     try {
-        execSync("pkill -9 -f QUANTUM1.js"); // Hentikan proses lama sebelum restart
+        execSync("pkill -9 -f QUANTUM.js"); // Hentikan proses lama sebelum restart
         console.log("Proses QUANTUM1.js sebelumnya dihentikan.");
     } catch (error) {
         console.log("Tidak ada proses QUANTUM1.js yang berjalan sebelumnya.");

@@ -8,7 +8,7 @@ if (args.length < 5) {
 
 const [host, time, thread, rate, proxy] = args;
 let elapsedTime = 0; 
-const restartInterval = 60; // Restart setiap 60 detik
+const restartInterval = 160; // Restart setiap 60 detik
 const restartDelay = 2; // Jeda 1 detik sebelum memulai ulang
 
 function runScript() {
