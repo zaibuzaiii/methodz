@@ -747,7 +747,7 @@ const proxyOptions = {
     host: parsedProxy[0],
     port: ~~parsedProxy[1],
     address: `${parsedTarget.host}:443`,
-    timeout: 10
+    timeout: 100
 };
 
 Socker.HTTP(proxyOptions, async (connection, error) => {
@@ -887,7 +887,7 @@ Socker.HTTP(proxyOptions, async (connection, error) => {
                 await Promise.all(requests.map(({ requestPromise }) => requestPromise));
                 client.write(Buffer.concat(frames));
             }
-        }, 500);  
+        }, 1000);  
     });
     
         client.on("close", () => {
